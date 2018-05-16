@@ -3,7 +3,14 @@ package com.example.thevert.creitive.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,20 +37,100 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.thevert.creitive.R;
 
+import com.example.thevert.creitive.Constants;
+import com.example.thevert.creitive.R;
+import com.example.thevert.creitive.model.LoginCredentials;
+import com.example.thevert.creitive.network.GetDataService;
+import com.example.thevert.creitive.network.RetrofitClientCreITive;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static android.Manifest.permission.READ_CONTACTS;
+
 
 /**
  * A login screen that offers login via email/password.
  */
-
-
-
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+
+    /**
+     * Function used to check network.
+     */
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    /**
+     * Function used to check email and password locally.
+     */
+
+    private boolean checkEmailPasswordLocaly(String email, String password) {
+     if( Constants.Email.equals(email) && Constants.Password.equals(password) ) {
+            return  true;
+        }
+     return false;
+    }
+
+    /**
+     * Function Display network Error
+     */
+
+    private void showNetworkError()
+    {
+        AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+        alertDialog.setTitle("Internet");
+        alertDialog.setMessage("Application could not connect to Internet");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Click here to go setting and enable internet",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                    }
+                });
+        alertDialog.show();
+    }
+
+    private void showLoginError()
+    {
+        Log.e("Warning", "Wrong password");
+        AlertDialog WrongPassword = new AlertDialog.Builder(LoginActivity.this).create();
+        WrongPassword.setTitle("Password");
+        WrongPassword.setMessage("Wrong Password");
+        WrongPassword.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        WrongPassword.show();
+    }
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -66,6 +154,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
+     * errors are presented
      */
     private void attemptLogin() {
         if (mAuthTask != null) {
@@ -181,28 +270,76 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mEmailView;
             cancel = true;
         }
+          else if (!haveNetworkConnection()) {
+            cancel = true;
+            }
+
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView.requestFocus();
+            if (haveNetworkConnection()) {
+                focusView.requestFocus();
+            }
+            else  {
+               showNetworkError(); // We show error message
+            }
+
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+
+            if (!checkEmailPasswordLocaly(email, password)) {
+                showLoginError();
+
+            } else {
+                showProgress(true);
+
+                mAuthTask = new UserLoginTask(email, password);
+
+                GetDataService service = RetrofitClientCreITive.getRetrofitInstance().create(GetDataService.class);
+                Call<ResponseBody> call = service.loginWithCredentials(new LoginCredentials(email, password));
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            try {
+                                // get String from response
+                                final String stringResponse = response.body().string();
+                                try {
+                                    JSONObject jsonObject = new JSONObject(stringResponse);
+                                    Constants.Token=jsonObject.getString("token");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.e("Token", Constants.Token);
+
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        // handle error
+                    }
+                });
+
+                //FinAjoutSimon
+
+
+            }
         }
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 6;
     }
 
     /**
