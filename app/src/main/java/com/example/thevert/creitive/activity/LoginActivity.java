@@ -65,7 +65,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity  {
+public class LoginActivity extends AppCompatActivity {
 
 
     public static final String MY_PREFS_NAME = "MyPrefsFile"; // SharedPreferences
@@ -97,18 +97,17 @@ public class LoginActivity extends AppCompatActivity  {
      */
 
     private boolean checkEmailPasswordLocaly(String email, String password) {
-     if( Constants.Email.equals(email) && Constants.Password.equals(password) ) {
-            return  true;
+        if (Constants.Email.equals(email) && Constants.Password.equals(password)) {
+            return true;
         }
-     return false;
+        return false;
     }
 
     /**
      * Function Display network Error
      */
 
-    private void showNetworkError()
-    {
+    private void showNetworkError() {
         AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
         alertDialog.setTitle("Internet");
         alertDialog.setMessage("Application could not connect to Internet");
@@ -122,8 +121,7 @@ public class LoginActivity extends AppCompatActivity  {
         alertDialog.show();
     }
 
-    private void showLoginError()
-    {
+    private void showLoginError() {
         Log.e("Warning", "Wrong password");
         AlertDialog WrongPassword = new AlertDialog.Builder(LoginActivity.this).create();
         WrongPassword.setTitle("Password");
@@ -158,20 +156,14 @@ public class LoginActivity extends AppCompatActivity  {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         SharedPreferences sp = getSharedPreferences("your_prefs", Activity.MODE_PRIVATE);
-        String StoredToken = sp.getString("Token","NoToken");
+        String StoredToken = sp.getString("Token", "NoToken");
 
-        if (!StoredToken.equals("NoToken"))
-        {
-            Constants.Token=StoredToken;
+        if (!StoredToken.equals("NoToken")) {
+            Constants.Token = StoredToken;
             Intent myIntent = new Intent(LoginActivity.this, ArticleListActivity.class);
             LoginActivity.this.startActivity(myIntent);
             finish();
         }
-
-
-
-
-
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -196,13 +188,6 @@ public class LoginActivity extends AppCompatActivity  {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
-
-
-
-
-
-
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -241,10 +226,9 @@ public class LoginActivity extends AppCompatActivity  {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }
-          else if (!haveNetworkConnection()) {
+        } else if (!haveNetworkConnection()) {
             cancel = true;
-            }
+        }
 
 
         if (cancel) {
@@ -252,9 +236,8 @@ public class LoginActivity extends AppCompatActivity  {
             // form field with an error.
             if (haveNetworkConnection()) {
                 focusView.requestFocus();
-            }
-            else  {
-               showNetworkError(); // We show error message
+            } else {
+                showNetworkError(); // We show error message
             }
 
         } else {
@@ -280,7 +263,7 @@ public class LoginActivity extends AppCompatActivity  {
                                 final String stringResponse = response.body().string();
                                 try {
                                     JSONObject jsonObject = new JSONObject(stringResponse);
-                                    Constants.Token=jsonObject.getString("token");
+                                    Constants.Token = jsonObject.getString("token");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -306,8 +289,6 @@ public class LoginActivity extends AppCompatActivity  {
                         // handle error
                     }
                 });
-
-                //FinAjoutSimon
 
 
             }

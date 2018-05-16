@@ -21,13 +21,12 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 
-
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
 
     private List<BlogList> dataList;
     private Context context;
 
-    public CustomAdapter(Context context,List<BlogList> dataList){
+    public CustomAdapter(Context context, List<BlogList> dataList) {
         this.context = context;
         this.dataList = dataList;
     }
@@ -51,8 +50,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   Log.e("CustomAdapter", "Article clicked id = "+bl.getId());
-                    Constants.CurrentArticle=bl.getId();
+                    Log.e("CustomAdapter", "Article clicked id = " + bl.getId());
+                    Constants.CurrentArticle = bl.getId();
                     context.startActivity(ArticleListActivity.IntentToChangeFromArticleListToArticle);
 
                 }
@@ -73,7 +72,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     public void onBindViewHolder(CustomViewHolder holder, int position) {
         holder.txtTitle.setText(dataList.get(position).getTitle());
         holder.bl = dataList.get(position);
-        holder.context=this.context;
+        holder.context = this.context;
 
         Picasso.Builder builder = new Picasso.Builder(context);
         builder.downloader(new OkHttp3Downloader(context));

@@ -34,7 +34,7 @@ public interface GetDataService {
     @GET("/blogs/{blogId}")
     Call<Article> getArticle(@Header("X-Authorize") String token,
                              @Header("Accept") String acc,
-                             @Path("blogId")int blogId);
+                             @Path("blogId") int blogId);
 
 
 }

@@ -43,20 +43,20 @@ public class ArticleListActivity extends AppCompatActivity {
 
 
         GetDataService service = RetrofitClientCreITive.getRetrofitInstance().create(GetDataService.class);
-        Call<List<BlogList>> call = service.getBlogs("application/json", Constants.Token);
+        Call<List<BlogList>> call = service.getBlogs(Constants.JsonHeader, Constants.Token);
         call.enqueue(new Callback<List<BlogList>>() {
 
             @Override
             public void onResponse(Call<List<BlogList>> call, Response<List<BlogList>> response) {
                 progressDoalog.dismiss();
-                Log.i("MainActivity","Network API Call success");
+                Log.i("MainActivity", "Network API Call success");
                 generateDataList(response.body());
             }
 
             @Override
             public void onFailure(Call<List<BlogList>> call, Throwable t) {
                 progressDoalog.dismiss();
-                Log.e("MainActivity","Network API Call fail "+t.getMessage());
+                Log.e("MainActivity", "Network API Call fail " + t.getMessage());
                 Toast.makeText(ArticleListActivity.this, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -64,10 +64,10 @@ public class ArticleListActivity extends AppCompatActivity {
 
     /*Method to generate List of data using RecyclerView with custom adapter*/
     private void generateDataList(List<BlogList> blogList) {
-        Log.i("MainActivity","Generating DataList");
+        Log.i("MainActivity", "Generating DataList");
         recyclerView = findViewById(R.id.customRecyclerView);
-        IntentToChangeFromArticleListToArticle= new Intent(this, ArticleActivity.class);
-        adapter = new CustomAdapter(this,blogList);
+        IntentToChangeFromArticleListToArticle = new Intent(this, ArticleActivity.class);
+        adapter = new CustomAdapter(this, blogList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ArticleListActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
