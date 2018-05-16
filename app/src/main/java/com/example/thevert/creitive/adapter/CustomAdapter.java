@@ -53,7 +53,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
                 public void onClick(View view) {
                    Log.e("CustomAdapter", "Article clicked id = "+bl.getId());
                     Constants.CurrentArticle=bl.getId();
-                    context.startActivity(ArticleListActivity.a1);
+                    context.startActivity(ArticleListActivity.IntentToChangeFromArticleListToArticle);
 
                 }
             });

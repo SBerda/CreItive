@@ -26,17 +26,16 @@ public class ArticleActivity extends AppCompatActivity {
 
         //Network API Request
         GetDataService service = RetrofitClientCreITive.getRetrofitInstance().create(GetDataService.class);
-        Call<Article> call = service.getArticle("eaf57e2cb62755db708144c93b1f319dcda89871","application/json", Constants.CurrentArticle);
+        Call<Article> call = service.getArticle(Constants.Token,"application/json", Constants.CurrentArticle);
         call.enqueue(new Callback<Article>() {
             @Override
             public void onResponse(Call<Article> call, Response<Article> response) {
             //    Log.i("ArticleActivity","API Article request Done");
-                final String rep = response.body().getContent();
-
+                final String reponseContent = response.body().getContent();
                 //Probably not the best way to display HTML
                 WebView webView =  findViewById(R.id.WebView2);
                 webView.getSettings().setJavaScriptEnabled(true);
-                webView.loadData(rep, "text/html; charset=utf-8", "UTF-8");
+                webView.loadData(reponseContent, "text/html; charset=utf-8", "UTF-8");
             }
 
             @Override

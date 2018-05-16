@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.thevert.creitive.Constants;
 import com.example.thevert.creitive.R;
 import com.example.thevert.creitive.adapter.CustomAdapter;
 import com.example.thevert.creitive.model.BlogList;
@@ -27,8 +28,9 @@ public class ArticleListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     ProgressDialog progressDoalog;
 
-    public static Intent a1; //Definitely a bad practice, I need to improve this in future, this intent is used in CustomAdapter in the OnClick.
-
+    public static Intent IntentToChangeFromArticleListToArticle;
+    /*Definitely a bad practice, I need to improve this in future.
+    This intent is used in CustomAdapter in the OnClick.*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,7 @@ public class ArticleListActivity extends AppCompatActivity {
 
 
         GetDataService service = RetrofitClientCreITive.getRetrofitInstance().create(GetDataService.class);
-
-        Call<List<BlogList>> call = service.getBlogs("application/json", "eaf57e2cb62755db708144c93b1f319dcda89871");
+        Call<List<BlogList>> call = service.getBlogs("application/json", Constants.Token);
         call.enqueue(new Callback<List<BlogList>>() {
 
             @Override
@@ -65,7 +66,7 @@ public class ArticleListActivity extends AppCompatActivity {
     private void generateDataList(List<BlogList> blogList) {
         Log.i("MainActivity","Generating DataList");
         recyclerView = findViewById(R.id.customRecyclerView);
-        a1= new Intent(this, ArticleActivity.class);
+        IntentToChangeFromArticleListToArticle= new Intent(this, ArticleActivity.class);
         adapter = new CustomAdapter(this,blogList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ArticleListActivity.this);
         recyclerView.setLayoutManager(layoutManager);

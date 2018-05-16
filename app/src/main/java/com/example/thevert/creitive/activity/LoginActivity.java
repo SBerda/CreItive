@@ -3,10 +3,12 @@ package com.example.thevert.creitive.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -64,6 +66,9 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity  {
+
+
+    public static final String MY_PREFS_NAME = "MyPrefsFile"; // SharedPreferences
 
 
     /**
@@ -151,6 +156,22 @@ public class LoginActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+
+        SharedPreferences sp = getSharedPreferences("your_prefs", Activity.MODE_PRIVATE);
+        String StoredToken = sp.getString("Token","NoToken");
+
+        if (!StoredToken.equals("NoToken"))
+        {
+            Constants.Token=StoredToken;
+            Intent myIntent = new Intent(LoginActivity.this, ArticleListActivity.class);
+            LoginActivity.this.startActivity(myIntent);
+            finish();
+        }
+
+
+
+
+
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -264,6 +285,11 @@ public class LoginActivity extends AppCompatActivity  {
                                     e.printStackTrace();
                                 }
                                 Log.e("Token", Constants.Token);
+
+                                SharedPreferences sp = getSharedPreferences("your_prefs", Activity.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putString("Token", Constants.Token);
+                                editor.commit();
                                 Intent myIntent = new Intent(LoginActivity.this, ArticleListActivity.class);
                                 LoginActivity.this.startActivity(myIntent);
                                 finish();
