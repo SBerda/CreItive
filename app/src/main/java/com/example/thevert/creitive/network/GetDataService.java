@@ -1,6 +1,7 @@
 package com.example.thevert.creitive.network;
 
 import com.example.thevert.creitive.activity.ArticleListActivity;
+import com.example.thevert.creitive.model.Article;
 import com.example.thevert.creitive.model.BlogList;
 import com.example.thevert.creitive.model.LoginCredentials;
 
@@ -13,6 +14,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 
 public interface GetDataService {
@@ -28,6 +30,12 @@ public interface GetDataService {
     Call<List<BlogList>> getBlogs(
             @Header("Accept") String acc,
             @Header("X-Authorize") String token);
+
+    @GET("/blogs/{blogId}")
+    Call<Article> getArticle(@Header("X-Authorize") String token,
+                             @Header("Accept") String acc,
+                             @Path("blogId")int blogId);
+
 
 }
 

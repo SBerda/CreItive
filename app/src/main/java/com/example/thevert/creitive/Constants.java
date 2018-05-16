@@ -8,6 +8,8 @@ public class Constants {
     public static final String Email ="candidate@creitive.com";
     public static final String Password ="1234567";
 
+    public static int CurrentArticle = 0;
+
 
 
 }

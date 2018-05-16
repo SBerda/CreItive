@@ -23,11 +23,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ArticleListActivity extends AppCompatActivity {
-
+    private CustomAdapter adapter;
     private RecyclerView recyclerView;
     ProgressDialog progressDoalog;
 
-  
+    public static Intent a1; //Definitely a bad practice, I need to improve this in future, this intent is used in CustomAdapter in the OnClick.
 
 
     @Override
@@ -65,10 +65,10 @@ public class ArticleListActivity extends AppCompatActivity {
     private void generateDataList(List<BlogList> blogList) {
         Log.i("MainActivity","Generating DataList");
         recyclerView = findViewById(R.id.customRecyclerView);
-        CustomAdapter adapter = new CustomAdapter(this,blogList);
+        a1= new Intent(this, ArticleActivity.class);
+        adapter = new CustomAdapter(this,blogList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ArticleListActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
-
 }

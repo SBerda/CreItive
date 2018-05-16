@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.thevert.creitive.Constants;
 import com.example.thevert.creitive.R;
+import com.example.thevert.creitive.activity.ArticleListActivity;
 import com.example.thevert.creitive.model.BlogList;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -49,6 +52,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
                 @Override
                 public void onClick(View view) {
                    Log.e("CustomAdapter", "Article clicked id = "+bl.getId());
+                    Constants.CurrentArticle=bl.getId();
+                    context.startActivity(ArticleListActivity.a1);
 
                 }
             });
