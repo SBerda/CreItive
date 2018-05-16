@@ -313,6 +313,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     e.printStackTrace();
                                 }
                                 Log.e("Token", Constants.Token);
+                                Intent myIntent = new Intent(LoginActivity.this, ArticleListActivity.class);
+                                LoginActivity.this.startActivity(myIntent);
+                                finish();
 
 
                             } catch (IOException e) {
