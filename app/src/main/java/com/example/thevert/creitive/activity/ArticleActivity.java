@@ -31,7 +31,7 @@ public class ArticleActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Article> call, Response<Article> response) {
             //    Log.i("ArticleActivity","API Article request Done");
-                final String rep = response.body().string();
+                final String rep = response.body().getContent();
 
                 //Probably not the best way to display HTML
                 WebView webView =  findViewById(R.id.WebView2);

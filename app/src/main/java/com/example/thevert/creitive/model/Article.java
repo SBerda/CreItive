@@ -8,15 +8,9 @@ public class Article {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Article(String content) {
         this.content = content;
     }
 
-    public String string() {
-        return  content;
-    }
+
 }
